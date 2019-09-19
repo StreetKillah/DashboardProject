@@ -1,17 +1,15 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
+import {deepPurple, purple} from "@material-ui/core/colors";
 import Paper from '@material-ui/core/Paper';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
-        marginTop:20,
-        marginLeft:50,
+        marginTop:-5,
+        marginLeft:19,
     },
     paper: {
         height: 150,
@@ -20,25 +18,120 @@ const useStyles = makeStyles(theme => ({
     control: {
         padding: theme.spacing(10),
     },
+    progress:{
+        backgroundColor:deepPurple[500],
+    },
 }));
 
+
+
+
+
 export default function TopBlock() {
-    const [spacing, setSpacing] = React.useState(2);
+    const [spacing, setSpacing] = React.useState(4);
     const classes = useStyles();
+    const [completed, setCompleted] = React.useState(0);
+    const [buffer, setBuffer] = React.useState(10);
+    const gridMassive=[0,1,2,3];
+
 
     function handleChange(event) {
         setSpacing(Number(event.target.value));
     }
 
+    const progress = React.useRef(() => {});
+    React.useEffect(() => {
+        progress.current = () => {
+            if (completed > 100) {
+                setCompleted(0);
+                setBuffer(10);
+            } else {
+                const diff = Math.random() * 10;
+                const diff2 = Math.random() * 10;
+                setCompleted(completed + diff);
+                setBuffer(completed + diff + diff2);
+            }
+        };
+    });
+
+    React.useEffect(() => {
+        function tick() {
+            progress.current();
+        }
+        const timer = setInterval(tick, 500);
+
+        return () => {
+            clearInterval(timer);
+        };
+    }, []);
+
+
+
+
+
+
     return (
         <Grid container className={classes.root} spacing={10}>
             <Grid item xs={12}>
                 <Grid container justify="center" spacing={spacing}>
-                    {[0, 1, 2,3].map(value => (
-                        <Grid key={value} item>
-                            <Paper className={classes.paper} />
-                        </Grid>
-                    ))}
+                    {gridMassive.map(
+                        function (index) {
+                       return(
+                           index===0 && <Grid item>
+                                  <Paper className={classes.paper}>
+                                      <div className={classes.root}>
+                                          <LinearProgress className={classes.progress}  variant="determinate" value={completed} valueBuffer={buffer}/>
+                                      </div>
+                                  </Paper>
+                              </Grid>);
+
+                        })}
+
+                    {gridMassive.map(
+                        function (index) {
+                            return(
+                                index===1 && <Grid item>
+                                    <Paper className={classes.paper}>
+                                        <div className={classes.root}>
+                                            <LinearProgress className={classes.progress} variant="determinate" color="secondary" value={completed} valueBuffer={buffer}/>
+                                        </div>
+                                    </Paper>
+                                </Grid>);
+
+                        })}
+
+                    {gridMassive.map(
+                        function (index) {
+                            return(
+                                index===2 && <Grid item>
+                                    <Paper className={classes.paper}>
+                                        <div className={classes.root}>
+                                            <LinearProgress className={classes.progress} variant="determinate" color="fourthly" value={completed} valueBuffer={buffer}/>
+                                        </div>
+                                    </Paper>
+                                </Grid>);
+
+                        })}
+
+                    {gridMassive.map(
+                        function (index) {
+                            return(
+                                index===3 && <Grid item>
+                                    <Paper className={classes.paper}>
+                                        <div className={classes.root}>
+                                            <LinearProgress className={classes.progress} variant="determinate" value={completed} valueBuffer={buffer}/>
+                                        </div>
+                                    </Paper>
+                                </Grid>);
+
+                        })}
+
+
+
+
+
+
+
                 </Grid>
             </Grid>
 
@@ -46,3 +139,4 @@ export default function TopBlock() {
 
     );
 }
+
